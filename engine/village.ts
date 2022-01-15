@@ -1,5 +1,4 @@
-import { RoleClass } from "./types.ts";
-import { roleClasses } from "./roles/mod.ts";
+import { roleActions } from "../roles/mod.ts";
 import { VillageState } from "../VillageState.ts";
 import { CreatureId, Log, Village, Vote, Night } from "../types.ts";
 
@@ -55,15 +54,9 @@ export function nightPhase(village: Village): VillageState {
   if (state.isEnd()) {
     return state
   }
-  const actorRoles: Record<CreatureId, RoleClass> = {};
   for (const a of today.noon.actions) {
     if(voted && (voted === a.actor || voted === a.target)) continue
-    if(!actorRoles[a.actor]) {
-      const {id, role} = state.creature(a.actor);
-      actorRoles[id] = new roleClasses[role.type](role);
-    }
-    const role = actorRoles[a.actor];
-    const result = role.action(a, state);
+    const result = roleActions[a.type](a, state);
     night.logs.push(...result.logs);
     night.died.push(...result.died);
   }

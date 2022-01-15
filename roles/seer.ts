@@ -1,11 +1,10 @@
-import { RoleClass } from "../types.ts";
-import { VillageState } from "../../VillageState.ts";
-import { Action, CreatureId, Log } from "../../types.ts";
+import { RoleModule } from "./types.ts";
+import { VillageState } from "../VillageState.ts";
+import { Action, CreatureId, Log } from "../types.ts";
 
-export default class implements RoleClass {
-  name = "seer";
-  team = "villagers" as const
-  action(action: Action, state: VillageState) {
+ const name = "seer";
+ const team = "villagers" as const
+ function see(action: Action, state: VillageState) {
     const logs: Log[] = []
     const died: { id: CreatureId, reason: string }[] = []
     const { actor, target } = action
@@ -15,4 +14,9 @@ export default class implements RoleClass {
     }
     return { logs, died }
   }
-}
+
+export default {
+  name,
+  team,
+  actions: {see}
+} as RoleModule
