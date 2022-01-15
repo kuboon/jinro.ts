@@ -2,9 +2,9 @@ import { RoleClass } from "../types.ts";
 import { VillageState } from "../../VillageState.ts";
 import { Action, CreatureId, Log } from "../../types.ts";
 
-export default class Wolf implements RoleClass {
-  name = "wolf";
-  team = "wolves" as const
+export default class implements RoleClass {
+  name = "seer";
+  team = "villagers" as const
   action(action: Action, state: VillageState) {
     const logs: Log[] = []
     const died: { id: CreatureId, reason: string }[] = []

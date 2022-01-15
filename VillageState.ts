@@ -37,7 +37,7 @@ export class VillageState {
     const s: typeof this.survivors = this.village.creatues.map(x => x.id)
     const g: typeof this.graves = [];
     function die(id: CreatureId, reason: string) {
-      if (s.includes(id)) {
+      if (s.includes(id) && g.every(x => x.id !== id)) {
         s.splice(s.indexOf(id), 1);
         g.push({ id, reason });
       } else {

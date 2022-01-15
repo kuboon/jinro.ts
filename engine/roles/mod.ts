@@ -1,4 +1,4 @@
-import { RoleClass } from "../types.ts";
+import { RoleConstructor } from "../types.ts";
 import wolf from "./wolf.ts";
 
-export const roleClasses: Record<string, RoleClass> = {wolf}
+export const roleClasses: Record<string, RoleConstructor> = {wolf}
