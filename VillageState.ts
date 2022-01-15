@@ -1,18 +1,24 @@
 import { CreatureId, Village } from "./types.ts";
+import { roleModules } from "./roles/mod.ts";
 
 export class VillageState {
   private _survivors?: CreatureId[];
   private _graves?: { id: CreatureId, reason: string }[];
   constructor(public readonly village: Village) {
   }
-  public creature(id: CreatureId) {
+  creature(id: CreatureId) {
     const c = this.village.creatues.find((c) => c.id === id)!
     return c
   }
-  public today() {
+  roleFor(id: CreatureId) {
+    const { role } = this.creature(id)
+    const mod = roleModules[role.type]
+    return { role, mod }
+  }
+  today() {
     return this.village.days.slice(-1)[0];
   }
-  public isEnd() {
+  isEnd() {
     const survivors = this.survivors.map(x => this.creature(x));
     const wolves = survivors.filter(x => x.role.team === "wolves");
     const villagers = survivors.filter(x => x.role.team === "villagers");
@@ -53,4 +59,5 @@ export class VillageState {
     this._survivors = s;
     this._graves = g;
   }
+
 }
