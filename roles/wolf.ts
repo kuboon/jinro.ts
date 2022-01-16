@@ -2,7 +2,14 @@ import { RoleModule } from "./types.ts";
 import { VillageState } from "../VillageState.ts";
 import { Action, CreatureId, Log } from "../types.ts";
 
-function bite(action: Action, state: VillageState) {
+function choices(state: VillageState, id: CreatureId) {
+  if(state.today().num != 0) {
+    return ['bite']
+  }
+  return []
+}
+
+function bite(state: VillageState, action: Action) {
   const logs: Log[] = []
   const died: { id: CreatureId, reason: string }[] = []
   const { actor, target } = action
@@ -16,5 +23,6 @@ function bite(action: Action, state: VillageState) {
 export default {
   name: "wolf",
   team: 'wolves' as const,
+  choices,
   actions: {bite},
 } as RoleModule
