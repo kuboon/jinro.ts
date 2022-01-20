@@ -19,9 +19,10 @@ function aVillage(): Village {
       vote: "public",
     },
     creatues: [
-      { id: "v", name: "1", role: {type: "villager", team: 'villagers'} },
-      { id: "s", name: "2", role: {type: "seer", team: 'villagers'} },
-      { id: "w", name: "3", role: {type: "wolf", team: 'wolves'} }
+      { id: "v", name: "1", role: {type: "villager"} },
+      { id: "s", name: "2", role: {type: "seer"} },
+      { id: "g", name: "3", role: {type: "bodyguard"} },
+      { id: "w", name: "4", role: {type: "wolf"} }
     ],
     days: [aDay()],
   };
@@ -44,7 +45,10 @@ Deno.test({
     const v: Village = aVillage()
     const noon: Noon = {
       votes: [],
-      actions: [],
+      actions: [
+        { type: "guard", actor: "g", target: "s" },
+        { type: "bite", actor: "w", target: "s" }
+      ],
     };
     const next = nightPhase(v, noon);
     assertEquals(next.lastDay.night.died, []);

@@ -21,7 +21,6 @@ export function countVotes(votes: Vote[]) {
   return { counts, max, voted };
 }
 export function nightPhase(village: Village, noon: Noon): VillageState {
-  let state = new VillageState(village);
   const { voted } = countVotes(noon.votes);
   const logs: Log[] = []
   logs.push({
@@ -43,14 +42,16 @@ export function nightPhase(village: Village, noon: Noon): VillageState {
       }
     ]
   });
-  state = new VillageState(nextVillage);
+  const state = new VillageState(nextVillage);
   if (state.isEnd()) {
     return state
   }
   for (const a of noon.actions) {
     if(voted && (voted === a.actor || voted === a.target)) continue
     const actor = state.creature(a.actor);
-    const choices = roleModules[actor.role.type].choices(state, a.actor);
+    const mod = roleModules[actor.role.type]
+    if(!mod) throw new Error(`No role module for ${actor.role.type}`)
+    const choices = mod.choices(state, a.actor);
     if(!choices.includes(a.type)) {
       throw new Error(`${actor.name}(${actor.role.type}) can't ${a.type}`)
     }
