@@ -1,7 +1,6 @@
-import { RoleClass } from "./types.ts";
-import { roleClasses } from "./roles/mod.ts";
+import { roleActions, roleModules } from "../roles/mod.ts";
 import { VillageState } from "../VillageState.ts";
-import { CreatureId, Log, Village, Vote, Night } from "../types.ts";
+import { CreatureId, Log, Village, Vote, Night, Noon } from "../types.ts";
 
 export function countVotes(votes: Vote[]) {
   const counts = votes.reduce((acc, v) => {
@@ -21,13 +20,9 @@ export function countVotes(votes: Vote[]) {
   const voted = targets[Math.floor(Math.random() * targets.length)];
   return { counts, max, voted };
 }
-export function nightPhase(village: Village): VillageState {
+export function nightPhase(village: Village, noon: Noon): VillageState {
   let state = new VillageState(village);
-  const today = state.today()
-  if(!today.noon || today.night) {
-    throw new Error("not noon")
-  }
-  const { voted } = countVotes(today.noon.votes);
+  const { voted } = countVotes(noon.votes);
   const logs: Log[] = []
   logs.push({
     receivers: 'all',
@@ -41,13 +36,10 @@ export function nightPhase(village: Village): VillageState {
   };
   const nextVillage = Object.assign({}, village, {
     days: [
-      ...village.days.slice(0, today.num - 1),
+      ...village.days,
       {
-        ...today,
-        night,
-      },
-      {
-        num: today.num + 1
+        noon,
+        night
       }
     ]
   });
@@ -55,15 +47,14 @@ export function nightPhase(village: Village): VillageState {
   if (state.isEnd()) {
     return state
   }
-  const actorRoles: Record<CreatureId, RoleClass> = {};
-  for (const a of today.noon.actions) {
+  for (const a of noon.actions) {
     if(voted && (voted === a.actor || voted === a.target)) continue
-    if(!actorRoles[a.actor]) {
-      const {id, role} = state.creature(a.actor);
-      actorRoles[id] = new roleClasses[role.type](role);
+    const actor = state.creature(a.actor);
+    const choices = roleModules[actor.role.type].choices(state, a.actor);
+    if(!choices.includes(a.type)) {
+      throw new Error(`${actor.name}(${actor.role.type}) can't ${a.type}`)
     }
-    const role = actorRoles[a.actor];
-    const result = role.action(a, state);
+    const result = roleActions[a.type](state, a);
     night.logs.push(...result.logs);
     night.died.push(...result.died);
   }
