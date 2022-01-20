@@ -3,27 +3,31 @@ import { roleModules } from "./roles/mod.ts";
 
 export class VillageState {
   private _survivors?: CreatureId[];
-  private _graves?: { id: CreatureId, reason: string }[];
+  private _graves?: { id: CreatureId; reason: string }[];
   constructor(public readonly village: Village) {
   }
   creature(id: CreatureId) {
-    const c = this.village.creatues.find((c) => c.id === id)!
-    return c
+    const c = this.village.creatues.find((c) => c.id === id);
+    if(!c) throw new Error(`${id} is invalid CreatureId`)
+    return c;
   }
   roleFor(id: CreatureId) {
-    const { role } = this.creature(id)
-    const mod = roleModules[role.type]
-    return { role, mod }
+    const { role } = this.creature(id);
+    const mod = roleModules[role.type];
+    return { role, mod };
   }
-  today() {
-    return this.village.days.slice(-1)[0];
+  get dayNum() {
+    return this.village.days.length;
+  }
+  get lastDay() {
+    return this.village.days[this.dayNum - 1];
   }
   isEnd() {
-    const survivors = this.survivors.map(x => this.creature(x));
-    const wolves = survivors.filter(x => x.role.team === "wolves");
-    const villagers = survivors.filter(x => x.role.team === "villagers");
+    const survivors = this.survivors.map((x) => this.creature(x));
+    const wolves = survivors.filter((x) => x.role.team === "wolves");
+    const villagers = survivors.filter((x) => x.role.team === "villagers");
     if (wolves.length < villagers.length) {
-      return false
+      return false;
     }
     return true;
   }
@@ -35,15 +39,15 @@ export class VillageState {
   }
   get graves() {
     if (!this._graves) {
-      this.countGraves()
+      this.countGraves();
     }
     return this._graves!;
   }
   private countGraves() {
-    const s: typeof this.survivors = this.village.creatues.map(x => x.id)
+    const s: typeof this.survivors = this.village.creatues.map((x) => x.id);
     const g: typeof this.graves = [];
     function die(id: CreatureId, reason: string) {
-      if (s.includes(id) && g.every(x => x.id !== id)) {
+      if (s.includes(id) && g.every((x) => x.id !== id)) {
         s.splice(s.indexOf(id), 1);
         g.push({ id, reason });
       } else {
@@ -51,13 +55,12 @@ export class VillageState {
       }
     }
     for (const day of this.village.days) {
-      if (!day.night) continue
-      const { voted, died } = day.night
+      if (!day.night) continue;
+      const { voted, died } = day.night;
       if (voted) die(voted, "vote");
-      g.push(...died)
+      g.push(...died);
     }
     this._survivors = s;
     this._graves = g;
   }
-
 }

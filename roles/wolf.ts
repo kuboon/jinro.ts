@@ -3,7 +3,7 @@ import { VillageState } from "../VillageState.ts";
 import { Action, CreatureId, Log } from "../types.ts";
 
 function choices(state: VillageState, id: CreatureId) {
-  if(state.today().num != 0) {
+  if(state.dayNum != 0) {
     return ['bite']
   }
   return []

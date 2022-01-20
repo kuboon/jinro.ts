@@ -5,7 +5,7 @@ import { Action, CreatureId, Log } from "../types.ts";
 const name = "seer";
 const team = "villagers" as const
 function choices(state: VillageState, id: CreatureId) {
-  if(state.today().num != 0) {
+  if(state.dayNum != 0) {
     return ['see']
   }
   const { role } = state.roleFor(id)
