@@ -23,7 +23,7 @@ export class VillageState {
     return this.village.days[this.dayNum - 1];
   }
   isEnd() {
-    const survivors = this.survivors.map((x) => this.creature(x));
+    const survivors = this.survivors.map((x) => this.roleFor(x));
     const wolves = survivors.filter((x) => x.role.team === "wolves");
     const villagers = survivors.filter((x) => x.role.team === "villagers");
     if (wolves.length < villagers.length) {

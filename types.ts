@@ -1,11 +1,9 @@
 export type Rule = {
   vote: "public" | "private";
 };
-export type Team = "villagers" | "wolves";
 export type CreatureId = string;
 export type Role = {
   type: string;
-  team: Team;
   [key: string]: string | number | boolean;
 };
 export type Creature = {
