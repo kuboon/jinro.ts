@@ -8,7 +8,6 @@ export type Role = {
 };
 export type Creature = {
   id: CreatureId;
-  name: string;
   role: Role;
 };
 export type Vote = {

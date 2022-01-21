@@ -1,37 +1,33 @@
-import { RoleModule } from "./types.ts";
-import { VillageState } from "../VillageState.ts";
-import { Action, CreatureId, Log } from "../types.ts";
+import { ActionFunc, ActionResults, ChoiceFunc, RoleModule, Team } from "./types.ts";
 
 const name = "seer";
-const team = "villagers" as const
-function choices(state: VillageState, id: CreatureId) {
-  if(state.dayNum != 0) {
-    return ['see']
+const team: Team = "villagers";
+const choices: ChoiceFunc = (state, id) =>{
+  if (state.dayNum != 0) {
+    return ["see"];
   }
-  const { role } = state.roleFor(id)
+  const { role } = state.roleFor(id);
   switch (role.firstNight) {
     case "white":
-      return ['see']
-    case 'none':
-      return []
-    case 'choice':
-      return ['see']
+      return ["seeWhite"];
+    case "choice":
+      return ["see"];
   }
+  return [];
 }
-function see(state: VillageState, action: Action) {
-  const logs: Log[] = []
-  const died: { id: CreatureId, reason: string }[] = []
-  const { actor, target } = action
-  if (state) {// unless target is guarded
-    logs.push({ receivers: [actor, target], action: "bite", actor, target })
-    died.push({ id: target, reason: 'bite' })
+const see: ActionFunc = (state, action) => {
+  const res: ActionResults = {logs: [], died: []}
+  const { actor, target } = action;
+  if (state) {
+    const result = 'white' 
+    res.logs.push({ receivers: [actor], action: "see", actor, target, result });
   }
-  return { logs, died }
-}
+  return res;
+};
 
-export default {
+export default <RoleModule> {
   name,
   team,
   choices,
-  actions: { see }
-} as RoleModule
+  actions: { see },
+};

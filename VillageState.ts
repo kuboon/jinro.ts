@@ -21,7 +21,8 @@ export class VillageState {
     return this.village.days.length;
   }
   get lastDay() {
-    return this.village.days[this.dayNum - 1];
+    const { days } = this.village;
+    return days[days.length - 1];
   }
   isEnd() {
     const survivors = this.survivors.map((x) => this.roleFor(x));

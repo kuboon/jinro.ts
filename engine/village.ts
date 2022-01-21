@@ -20,7 +20,8 @@ export function countVotes(votes: Vote[]) {
   const voted = targets[Math.floor(Math.random() * targets.length)];
   return { counts, max, voted };
 }
-export function nightPhase(village: Village, noon: Noon): VillageState {
+export function nightPhase(village_: Village | VillageState, noon: Noon): VillageState {
+  const currentState = village_ instanceof VillageState ? village_ : new VillageState(village_);
   const { voted } = countVotes(noon.votes);
   const logs: Log[] = []
   logs.push({
@@ -33,9 +34,9 @@ export function nightPhase(village: Village, noon: Noon): VillageState {
     logs,
     died: []
   };
-  const nextVillage = Object.assign({}, village, {
+  const nextVillage = Object.assign({}, currentState.village, {
     days: [
-      ...village.days,
+      ...currentState.village.days,
       {
         noon,
         night
@@ -51,9 +52,9 @@ export function nightPhase(village: Village, noon: Noon): VillageState {
     const actor = state.creature(a.actor);
     const mod = roleModules[actor.role.type]
     if(!mod) throw new Error(`No role module for ${actor.role.type}`)
-    const choices = mod.choices(state, a.actor);
+    const choices = mod.choices(currentState, a.actor);
     if(!choices.includes(a.type)) {
-      throw new Error(`${actor.name}(${actor.role.type}) can't ${a.type}`)
+      throw new Error(`${actor.id}(${actor.role.type}) can't ${a.type}`)
     }
     const result = roleActions[a.type](state, a);
     night.logs.push(...result.logs);
