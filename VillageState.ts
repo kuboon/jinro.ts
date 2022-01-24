@@ -1,21 +1,43 @@
-import { CreatureId, Village } from "./types.ts";
+import { CreatureId, Log, Role, Village } from "./types.ts";
 import { roleModules } from "./roles/mod.ts";
+import { RoleModule } from "./roles/types.ts";
+import { partition } from "./util.ts";
 
+export class CreatureClass {
+  role: Role;
+  mod: RoleModule;
+  constructor(public readonly state: VillageState, public id: CreatureId) {
+    const c = this.state.village.creatures.find((c) => c.id === id);
+    if (!c) throw new Error(`${id} is invalid CreatureId`);
+    this.role = c.role;
+    this.mod = roleModules[this.role.type];
+    if (!this.mod) throw new Error(`No role module for ${this.role.type}`);
+  }
+  get alive() {
+    return !this.dieOf;
+  }
+  get dieOf() {
+    return this.state.targettedLogs[this.id].find((a) => a.result === "die");
+  }
+  targetted(action: string) {
+    return this.state.targettedLogs[this.id].find((a) => a.action === action);
+  }
+}
 export class VillageState {
-  private _survivors?: CreatureId[];
-  private _graves?: { id: CreatureId; reason: string }[];
+  private _survivors?: CreatureClass[];
+  private _graves?: CreatureClass[];
+  private _creatures: { [key: string]: CreatureClass } = {};
+  private _targettedLogs?: { [id: CreatureId]: Log[] };
   constructor(public readonly village: Village) {
   }
   creature(id: CreatureId) {
-    const c = this.village.creatues.find((c) => c.id === id);
-    if(!c) throw new Error(`${id} is invalid CreatureId`)
-    return c;
+    if (!this._creatures[id]) {
+      this._creatures[id] = new CreatureClass(this, id);
+    }
+    return this._creatures[id];
   }
-  roleFor(id: CreatureId) {
-    const { role } = this.creature(id);
-    const mod = roleModules[role.type];
-    if(!mod) throw new Error(`No role module for ${role.type}`)
-    return { role, mod };
+  clearCache() {
+    this._targettedLogs = undefined;
   }
   get dayNum() {
     return this.village.days.length;
@@ -24,8 +46,24 @@ export class VillageState {
     const { days } = this.village;
     return days[days.length - 1];
   }
+  get targettedLogs() {
+    if (!this._targettedLogs) {
+      const logs: VillageState["_targettedLogs"] = {};
+      this.village.creatures.forEach((c) => {
+        logs[c.id] = [];
+      });
+      this.village.days.forEach((day) => {
+        day.logs.forEach((log) => {
+          if (!log.target) return;
+          logs[log.target].push(log);
+        });
+      });
+      this._targettedLogs = logs;
+    }
+    return this._targettedLogs;
+  }
   isEnd() {
-    const survivors = this.survivors.map((x) => this.roleFor(x));
+    const survivors = this.survivors;
     const wolves = survivors.filter((x) => x.mod.team === "wolves");
     const villagers = survivors.filter((x) => x.mod.team === "villagers");
     if (wolves.length < villagers.length) {
@@ -35,7 +73,7 @@ export class VillageState {
   }
   get survivors() {
     if (!this._survivors) {
-      this.countGraves();
+      this.countGraves()
     }
     return this._survivors!;
   }
@@ -46,23 +84,9 @@ export class VillageState {
     return this._graves!;
   }
   private countGraves() {
-    const s: typeof this.survivors = this.village.creatues.map((x) => x.id);
-    const g: typeof this.graves = [];
-    function die(id: CreatureId, reason: string) {
-      if (s.includes(id) && g.every((x) => x.id !== id)) {
-        s.splice(s.indexOf(id), 1);
-        g.push({ id, reason });
-      } else {
-        throw new Error(`${id} is already dead`);
-      }
-    }
-    for (const day of this.village.days) {
-      if (!day.night) continue;
-      const { voted, died } = day.night;
-      if (voted) die(voted, "vote");
-      g.push(...died);
-    }
+    const creatures: CreatureClass[] = this.village.creatures.map((x) => this.creature(x.id))
+    const [s, d] = partition(creatures, (x) => x.alive);
     this._survivors = s;
-    this._graves = g;
+    this._graves = d;
   }
 }

@@ -6,7 +6,7 @@ const choices: ChoiceFunc = (state, id) =>{
   if (state.dayNum != 0) {
     return ["see"];
   }
-  const { role } = state.roleFor(id);
+  const { role } = state.creature(id);
   switch (role.firstNight) {
     case "white":
       return ["seeWhite"];

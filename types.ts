@@ -10,11 +10,6 @@ export type Creature = {
   id: CreatureId;
   role: Role;
 };
-export type Vote = {
-  type: "vote";
-  actor: CreatureId;
-  target: CreatureId;
-};
 export type Action = {
   type: string;
   actor: CreatureId;
@@ -27,21 +22,12 @@ export type Log = {
   target?: CreatureId;
   result?: string;
 };
-export type Noon = {
-  votes: Vote[];
-  actions: Action[];
-};
-export type Night = {
-  logs: Log[];
-  voted: CreatureId | null;
-  died: { id: CreatureId; reason: string }[];
-};
 export type Day = {
-  noon: Noon;
-  night: Night;
+  actions: Action[];
+  logs: Log[];
 };
 export type Village = {
   rule: Rule;
-  creatues: Creature[];
+  creatures: Creature[];
   days: Day[];
 };
