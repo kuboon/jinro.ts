@@ -1,4 +1,5 @@
 import { Log } from "../types.ts";
+import { CreatureClass, VillageState } from "../VillageState.ts";
 import {
   ActionFunc,
   ActionResults,
@@ -10,8 +11,8 @@ import {
 
 const name = "lover";
 const team: Team = "lovers";
-const choices: ChoiceFunc = (state, _id) => {
-  if (state.dayNum == 0) {
+function choices(this: CreatureClass) {
+  if (this.state.dayNum == 0) {
     return ["propose"];
   }
   return [];
@@ -27,8 +28,9 @@ const propose: ActionFunc = (_state, action) => {
   });
   return res;
 };
-const on: EventHandler = (event, lover) => {
-  const { state } = lover;
+const on: EventHandler = function (event) {
+  const lover = this as unknown as CreatureClass;
+  const { state } = lover
   const res: Log[] = [];
   if (event !== "afteractions") return res;
   const proposeLog = state.village.days.flatMap((day) => day.logs).find((x) =>
@@ -41,7 +43,7 @@ const on: EventHandler = (event, lover) => {
       receivers: "all",
       action: "suicide",
       result: "die",
-      actor: loved.id,
+      target: loved.id,
     });
   }
   if (lover.alive && !loved.alive) {
@@ -49,10 +51,10 @@ const on: EventHandler = (event, lover) => {
       receivers: "all",
       action: "suicide",
       result: "die",
-      actor: lover.id,
+      target: lover.id,
     });
   }
-  return [] as Log[];
+  return res;
 };
 export default <RoleModule> {
   name,

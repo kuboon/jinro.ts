@@ -55,6 +55,6 @@ Deno.test({
       { type: "vote", actor: "v", target: "l" },
     ];
     const day1 = nightPhase(day0.village, actions1);
-    assertEquals(day1.creature('v').dieOf, "suicide" );
+    assertEquals(day1.creature('v').dieOf?.action, "suicide" );
   },
 });

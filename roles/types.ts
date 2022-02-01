@@ -3,10 +3,10 @@ import { CreatureClass, VillageState } from "../VillageState.ts";
 
 export type Team = "villagers" | "wolves" | "lovers";
 export type EventName = 'afteractions'
-export type ChoiceFunc = (state: VillageState, id: CreatureId) => string[] 
+export type ChoiceFunc =  (this: CreatureClass) => string[]
 export type ActionResults = { logs: Log[], died: { id: CreatureId, reason: string }[] }
 export type ActionFunc = (state: VillageState, action: Action) => ActionResults
-export type EventHandler = (event: EventName, creature: CreatureClass) => Log[]
+export type EventHandler = (this: CreatureClass, event: EventName) => Log[]
 export type RoleModule = {
   name: string
   team: Team

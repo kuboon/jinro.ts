@@ -1,7 +1,6 @@
 import { CreatureId, Log, Role, Village } from "./types.ts";
 import { roleModules } from "./roles/mod.ts";
 import { RoleModule } from "./roles/types.ts";
-import { partition } from "./util.ts";
 
 export class CreatureClass {
   role: Role;
@@ -24,8 +23,6 @@ export class CreatureClass {
   }
 }
 export class VillageState {
-  private _survivors?: CreatureClass[];
-  private _graves?: CreatureClass[];
   private _creatures: { [key: string]: CreatureClass } = {};
   private _targettedLogs?: { [id: CreatureId]: Log[] };
   constructor(public readonly village: Village) {
@@ -35,6 +32,9 @@ export class VillageState {
       this._creatures[id] = new CreatureClass(this, id);
     }
     return this._creatures[id];
+  }
+  get creatures() {
+    return this.village.creatures.map((x) => this.creature(x.id));
   }
   clearCache() {
     this._targettedLogs = undefined;
@@ -63,30 +63,12 @@ export class VillageState {
     return this._targettedLogs;
   }
   isEnd() {
-    const survivors = this.survivors;
+    const survivors = this.creatures.filter(x => x.alive);
     const wolves = survivors.filter((x) => x.mod.team === "wolves");
     const villagers = survivors.filter((x) => x.mod.team === "villagers");
     if (wolves.length < villagers.length) {
       return false;
     }
     return true;
-  }
-  get survivors() {
-    if (!this._survivors) {
-      this.countGraves()
-    }
-    return this._survivors!;
-  }
-  get graves() {
-    if (!this._graves) {
-      this.countGraves();
-    }
-    return this._graves!;
-  }
-  private countGraves() {
-    const creatures: CreatureClass[] = this.village.creatures.map((x) => this.creature(x.id))
-    const [s, d] = partition(creatures, (x) => x.alive);
-    this._survivors = s;
-    this._graves = d;
   }
 }
