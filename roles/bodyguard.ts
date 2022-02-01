@@ -4,7 +4,7 @@ import { CreatureId } from "../types.ts";
 
 const name = "bodyguard";
 const team = "villagers" as Team;
-function choices(_state: VillageState, _id: CreatureId) {
+function choices() {
   return ['guard'];
 }
 function guard(){

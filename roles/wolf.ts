@@ -1,9 +1,9 @@
 import { RoleModule } from "./types.ts";
-import { VillageState } from "../VillageState.ts";
+import { CreatureClass, VillageState } from "../VillageState.ts";
 import { Action, CreatureId, Log } from "../types.ts";
 
-function choices(state: VillageState, _id: CreatureId) {
-  if (state.dayNum != 0) {
+function choices(this: CreatureClass) {
+  if (this.state.dayNum != 0) {
     return ["bite"];
   }
   return [];

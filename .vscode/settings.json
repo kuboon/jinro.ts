@@ -4,5 +4,6 @@
   "deno.unstable": true,
   "javascript.format.enable": false,
   "typescript.format.enable": false,
-  "editor.defaultFormatter": "denoland.vscode-deno"
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.config": "deno.json"
 }

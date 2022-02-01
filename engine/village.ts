@@ -54,8 +54,8 @@ export function nightPhase(
   }
   for (const a of otherActions) {
     if (voted && (voted === a.actor || voted === a.target)) continue;
-    const actor = nextState.creature(a.actor);
-    const choices = actor.mod.choices(currentState, a.actor);
+    const actor = currentState.creature(a.actor);
+    const choices = actor.mod.choices.apply(actor);
     if (!choices.includes(a.type)) {
       throw new Error(`${actor.id}(${actor.role.type}) can't ${a.type}`);
     }
@@ -63,9 +63,9 @@ export function nightPhase(
     logs.push(...result.logs);
   }
   nextState.clearCache();
-  nextState.village.creatures.map(x=>nextState.creature(x.id)).forEach((c) => {
+  nextState.creatures.forEach((c) => {
     if (c.mod.on) {
-      logs.push(...c.mod.on("afteractions", c));
+      logs.push(...c.mod.on.apply(c, ["afteractions"]));
     }
   });
   nextState.clearCache();

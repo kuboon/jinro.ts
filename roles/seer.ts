@@ -1,12 +1,14 @@
+import { CreatureClass } from "../VillageState.ts";
 import { ActionFunc, ActionResults, ChoiceFunc, RoleModule, Team } from "./types.ts";
 
 const name = "seer";
 const team: Team = "villagers";
-const choices: ChoiceFunc = (state, id) =>{
+function choices(this: CreatureClass) {
+  const state = this.state;
   if (state.dayNum != 0) {
     return ["see"];
   }
-  const { role } = state.creature(id);
+  const { role } = this;
   switch (role.firstNight) {
     case "white":
       return ["seeWhite"];
