@@ -63,7 +63,7 @@ export class VillageState {
     return this._targettedLogs;
   }
   isEnd() {
-    const survivors = this.creatures.filter(x => x.alive);
+    const survivors = this.creatures.filter((x) => x.alive);
     const wolves = survivors.filter((x) => x.mod.team === "wolves");
     const villagers = survivors.filter((x) => x.mod.team === "villagers");
     if (wolves.length < villagers.length) {

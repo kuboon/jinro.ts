@@ -12,7 +12,7 @@ export class Translator extends VillageState {
       const target = this.creature(l.target).name;
       let line;
       switch (l.action) {
-        case 'bite':
+        case "bite":
           line = `${actor}は${target}を襲撃した。`;
       }
       lines.push(line);

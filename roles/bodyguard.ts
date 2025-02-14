@@ -5,13 +5,13 @@ import { CreatureId } from "../types.ts";
 const name = "bodyguard";
 const team = "villagers" as Team;
 function choices() {
-  return ['guard'];
+  return ["guard"];
 }
-function guard(){
+function guard() {
   return {
     logs: [],
     died: [],
-  }
+  };
 }
 export default {
   name,

@@ -16,7 +16,7 @@ function choices(this: CreatureClass) {
     return ["propose"];
   }
   return [];
-};
+}
 const propose: ActionFunc = (_state, action) => {
   const res: ActionResults = { logs: [], died: [] };
   const { actor, target } = action;
@@ -30,7 +30,7 @@ const propose: ActionFunc = (_state, action) => {
 };
 const on: EventHandler = function (event) {
   const lover = this as unknown as CreatureClass;
-  const { state } = lover
+  const { state } = lover;
   const res: Log[] = [];
   if (event !== "afteractions") return res;
   const proposeLog = state.village.days.flatMap((day) => day.logs).find((x) =>
