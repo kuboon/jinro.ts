@@ -1,9 +1,8 @@
 import { Log } from "../types.ts";
-import { CreatureClass, VillageState } from "../VillageState.ts";
-import {
+import { CreatureClass } from "../VillageState.ts";
+import type {
   ActionFunc,
   ActionResults,
-  ChoiceFunc,
   EventHandler,
   RoleModule,
   Team,

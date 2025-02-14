@@ -1,4 +1,4 @@
-import { roleActions, roleModules } from "../roles/mod.ts";
+import { roleActions } from "../roles/mod.ts";
 import { VillageState } from "../VillageState.ts";
 import { Action, CreatureId, Log, Village } from "../types.ts";
 import { partition } from "../util.ts";

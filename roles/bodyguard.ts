@@ -1,6 +1,4 @@
 import { RoleModule, Team } from "./types.ts";
-import { VillageState } from "../VillageState.ts";
-import { CreatureId } from "../types.ts";
 
 const name = "bodyguard";
 const team = "villagers" as Team;

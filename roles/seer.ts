@@ -1,8 +1,7 @@
 import { CreatureClass } from "../VillageState.ts";
-import {
+import type {
   ActionFunc,
   ActionResults,
-  ChoiceFunc,
   RoleModule,
   Team,
 } from "./types.ts";

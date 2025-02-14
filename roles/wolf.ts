@@ -1,6 +1,6 @@
-import { RoleModule } from "./types.ts";
 import { CreatureClass, VillageState } from "../VillageState.ts";
-import { Action, CreatureId, Log } from "../types.ts";
+import type { RoleModule } from "./types.ts";
+import type { Action, CreatureId, Log } from "../types.ts";
 
 function choices(this: CreatureClass) {
   if (this.state.dayNum != 0) {

@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.121.0/testing/asserts.ts";
-import { Village } from "../types.ts";
+import type { Village } from "../types.ts";
 import { nightPhase } from "./village.ts";
 
 const aDay = () => ({
