@@ -1,9 +1,9 @@
-import { roleActions } from "../roles/mod.ts";
-import { VillageState } from "../VillageState.ts";
-import { Action, CreatureId, Log, Village } from "../types.ts";
-import { partition } from "../util.ts";
+import { roleActions } from "./roles/mod.ts";
+import { VillageState } from "./VillageState.ts";
+import { Action, CreatureId, Log, Village } from "./types.ts";
+import { partition } from "./util.ts";
 
-export function countVotes(votes: Action[]) {
+function countVotes(votes: Action[]) {
   const counts = votes.reduce((acc, v) => {
     acc[v.target] = (acc[v.target] || 0) + 1;
     return acc;

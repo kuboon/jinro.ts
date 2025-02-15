@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
-import type { Creature, Village } from "../types.ts";
-import { nightPhase } from "./village.ts";
+import type { Creature, Village } from "./types.ts";
+import { nightPhase } from "./nightPhase.ts";
 
 const aDay = () => ({
   actions: [],
