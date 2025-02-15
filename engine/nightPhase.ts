@@ -15,7 +15,7 @@ function countVotes(votes: Action[]) {
       acc.targets.push(k as CreatureId);
     }
     return acc;
-  }, { targets: [], count: 0 } as { targets: CreatureId[]; count: number });
+  }, { targets: [] as CreatureId[], count: 0 });
   const { targets } = max;
   const voted = targets[Math.floor(Math.random() * targets.length)];
   return { counts, max, voted };
