@@ -1,17 +1,24 @@
 import { assertEquals } from "@std/assert";
-import type { Creature, Village } from "./types.ts";
+import type { Action, ActionType, Creature, Village } from "./types.ts";
 import { nightPhase } from "./nightPhase.ts";
+import { CreatureId } from "./types.ts";
 
 const aDay = () => ({
   actions: [],
   logs: [],
 });
 
-const villager: Creature = { id: "v", role: { type: "villager" } };
-const seer: Creature = { id: "s", role: { type: "seer" } };
-const bodyguard: Creature = { id: "g", role: { type: "bodyguard" } };
-const wolf: Creature = { id: "w", role: { type: "wolf" } };
-const lover: Creature = { id: "l", role: { type: "lover" } };
+const villager: Creature = {
+  id: "v" as CreatureId,
+  role: { type: "villager" },
+};
+const seer: Creature = { id: "s" as CreatureId, role: { type: "seer" } };
+const bodyguard: Creature = {
+  id: "g" as CreatureId,
+  role: { type: "bodyguard" },
+};
+const wolf: Creature = { id: "w" as CreatureId, role: { type: "wolf" } };
+const lover: Creature = { id: "l" as CreatureId, role: { type: "lover" } };
 
 function aVillage(days = [aDay()]): Village {
   return {
@@ -26,7 +33,11 @@ Deno.test({
   name: "bite kills",
   fn: () => {
     const v: Village = aVillage();
-    const actions = [{ type: "bite", actor: wolf.id, target: seer.id }];
+    const actions = [{
+      type: "bite" as ActionType,
+      actor: wolf.id,
+      target: seer.id,
+    }];
     const next = nightPhase(v, actions);
     assertEquals(next.creature(seer.id).alive, false);
   },
@@ -36,8 +47,8 @@ Deno.test({
   fn: () => {
     const v: Village = aVillage();
     const actions = [
-      { type: "guard", actor: bodyguard.id, target: seer.id },
-      { type: "bite", actor: wolf.id, target: seer.id },
+      { type: "guard" as ActionType, actor: bodyguard.id, target: seer.id },
+      { type: "bite" as ActionType, actor: wolf.id, target: seer.id },
     ];
     const next = nightPhase(v, actions);
     assertEquals(next.creature(seer.id).alive, true);
@@ -49,11 +60,11 @@ Deno.test({
   fn: () => {
     const v: Village = aVillage([]);
     const actions0 = [
-      { type: "propose", actor: lover.id, target: villager.id },
+      { type: "propose" as ActionType, actor: lover.id, target: villager.id },
     ];
     const day0 = nightPhase(v, actions0);
     const actions1 = [
-      { type: "vote", actor: villager.id, target: lover.id },
+      { type: "vote" as ActionType, actor: villager.id, target: lover.id },
     ];
     const day1 = nightPhase(day0.village, actions1);
     assertEquals(day1.creature(villager.id).dieOf?.action, "suicide");

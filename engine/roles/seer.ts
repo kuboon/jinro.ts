@@ -1,10 +1,6 @@
+import type { ActionType } from "../types.ts";
 import { CreatureClass } from "../VillageState.ts";
-import type {
-  ActionFunc,
-  ActionResults,
-  RoleModule,
-  Team,
-} from "./types.ts";
+import type { ActionFunc, ActionResults, RoleModule, Team } from "./types.ts";
 
 const name = "seer";
 const team: Team = "villagers";
@@ -27,14 +23,20 @@ const see: ActionFunc = (state, action) => {
   const { actor, target } = action;
   if (state) {
     const result = "white";
-    res.logs.push({ receivers: [actor], action: "see", actor, target, result });
+    res.logs.push({
+      receivers: [actor],
+      action: "see" as ActionType,
+      actor,
+      target,
+      result,
+    });
   }
   return res;
 };
 
-export default <RoleModule> {
+export default {
   name,
   team,
   choices,
   actions: { see },
-};
+} satisfies RoleModule;

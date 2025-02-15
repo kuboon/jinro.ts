@@ -1,6 +1,6 @@
 import { roleActions } from "./roles/mod.ts";
 import { VillageState } from "./VillageState.ts";
-import { Action, CreatureId, Log, Village } from "./types.ts";
+import { Action, ActionType, CreatureId, Log, Village } from "./types.ts";
 import { partition } from "./util.ts";
 
 function countVotes(votes: Action[]) {
@@ -10,9 +10,9 @@ function countVotes(votes: Action[]) {
   }, {} as Record<CreatureId, number>);
   const max = Object.entries(counts).reduce((acc, [k, v]) => {
     if (v > acc.count) {
-      return { targets: [k], count: v };
+      return { targets: [k as CreatureId], count: v };
     } else if (v === acc.count) {
-      acc.targets.push(k);
+      acc.targets.push(k as CreatureId);
     }
     return acc;
   }, { targets: [], count: 0 } as { targets: CreatureId[]; count: number });
@@ -34,7 +34,7 @@ export function nightPhase(
     logs.push({
       receivers: "all",
       target: voted,
-      action: "vote",
+      action: "vote" as ActionType,
       result: "die",
     });
   }

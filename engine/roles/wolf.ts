@@ -1,6 +1,6 @@
 import { CreatureClass, VillageState } from "../VillageState.ts";
 import type { RoleModule } from "./types.ts";
-import type { Action, CreatureId, Log } from "../types.ts";
+import type { Action, ActionType, CreatureId, Log } from "../types.ts";
 
 function choices(this: CreatureClass) {
   if (this.state.dayNum != 0) {
@@ -17,7 +17,7 @@ function bite(state: VillageState, action: Action) {
   if (!actions.some((x) => x.type === "guard" && x.target === target)) { // unless target is guarded
     logs.push({
       receivers: [actor, target],
-      action: "bite",
+      action: "bite" as ActionType,
       actor,
       target,
       result: "die",
@@ -31,4 +31,4 @@ export default {
   team: "wolves" as const,
   choices,
   actions: { bite },
-} as RoleModule;
+} satisfies RoleModule;

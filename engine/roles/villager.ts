@@ -10,4 +10,4 @@ export default {
   team,
   choices,
   actions: {},
-} as RoleModule;
+} satisfies RoleModule;

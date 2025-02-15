@@ -1,4 +1,4 @@
-import { Log } from "../types.ts";
+import { ActionType, Log } from "../types.ts";
 import { CreatureClass } from "../VillageState.ts";
 import type {
   ActionFunc,
@@ -10,9 +10,13 @@ import type {
 
 const name = "lover";
 const team: Team = "lovers";
+
+const proposeAction = "propose" as ActionType;
+const suicideAction = "suicide" as ActionType;
+
 function choices(this: CreatureClass) {
   if (this.state.dayNum == 0) {
-    return ["propose"];
+    return [proposeAction];
   }
   return [];
 }
@@ -21,7 +25,7 @@ const propose: ActionFunc = (_state, action) => {
   const { actor, target } = action;
   res.logs.push({
     receivers: [actor, target],
-    action: "propose",
+    action: proposeAction,
     actor,
     target,
   });
@@ -33,14 +37,14 @@ const on: EventHandler = function (event) {
   const res: Log[] = [];
   if (event !== "afteractions") return res;
   const proposeLog = state.village.days.flatMap((day) => day.logs).find((x) =>
-    x.action === "propose" && x.actor === lover.id
+    x.action === proposeAction && x.actor === lover.id
   );
   if (!proposeLog) return res;
   const loved = state.creature(proposeLog.target!);
   if (!lover.alive && loved.alive) {
     res.push({
       receivers: "all",
-      action: "suicide",
+      action: suicideAction,
       result: "die",
       target: loved.id,
     });
@@ -48,17 +52,17 @@ const on: EventHandler = function (event) {
   if (lover.alive && !loved.alive) {
     res.push({
       receivers: "all",
-      action: "suicide",
+      action: suicideAction,
       result: "die",
       target: lover.id,
     });
   }
   return res;
 };
-export default <RoleModule> {
+export default {
   name,
   team,
   choices,
   actions: { propose },
   on,
-};
+} satisfies RoleModule;

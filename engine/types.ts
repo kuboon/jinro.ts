@@ -1,7 +1,16 @@
+declare const BrandTypeId: unique symbol;
+
+interface Brand<in out K extends string | symbol> {
+  readonly [BrandTypeId]: {
+    readonly [k in K]: K;
+  };
+}
+
 export type Rule = {
   vote: "public" | "private";
 };
-export type CreatureId = string;
+
+export type CreatureId = string & Brand<"CreatureId">;
 export type Role = {
   type: string;
   [key: string]: string | number | boolean;
@@ -9,15 +18,17 @@ export type Role = {
 export type Creature = {
   id: CreatureId;
   role: Role;
+  name?: string;
 };
+export type ActionType = string & Brand<"ActionType">;
 export type Action = {
-  type: string;
+  type: ActionType;
   actor: CreatureId;
   target: CreatureId;
 };
 export type Log = {
   receivers: CreatureId[] | "all" | "afterall";
-  action: string;
+  action: ActionType;
   actor?: CreatureId;
   target?: CreatureId;
   result?: string;
