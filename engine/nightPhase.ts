@@ -1,25 +1,22 @@
 import { roleActions } from "./roles/mod.ts";
 import { VillageState } from "./VillageState.ts";
 import { Action, ActionType, CreatureId, Log, Village } from "./types.ts";
-import { partition } from "./util.ts";
+import { partition, sample } from "./util.ts";
 
 function countVotes(votes: Action[]) {
   const counts = votes.reduce((acc, v) => {
-    acc[v.target] = (acc[v.target] || 0) + 1;
+    acc[v.target] ||= 0;
+    acc[v.target]++;
     return acc;
   }, {} as Record<CreatureId, number>);
-  const max = Object.entries(counts).reduce((acc, [k, v]) => {
-    if (v > acc.count) {
-      return { targets: [k as CreatureId], count: v };
-    } else if (v === acc.count) {
-      acc.targets.push(k as CreatureId);
-    }
-    return acc;
-  }, { targets: [] as CreatureId[], count: 0 });
-  const { targets } = max;
-  const voted = targets[Math.floor(Math.random() * targets.length)];
+  const max = Math.max(...Object.values(counts));
+  const targets = Object.entries(counts).filter(([, v]) => v === max).map((
+    [k],
+  ) => k as CreatureId);
+  const voted = sample(targets);
   return { counts, max, voted };
 }
+
 export function nightPhase(
   village_: Village | VillageState,
   actions: Action[],
@@ -29,6 +26,7 @@ export function nightPhase(
     : new VillageState(village_);
   const [votes, otherActions] = partition(actions, (x) => x.type === "vote");
   const { voted } = countVotes(votes);
+
   const logs: Log[] = [];
   if (voted) {
     logs.push({
@@ -39,7 +37,7 @@ export function nightPhase(
     });
   }
   const today = {
-    actions,
+    actions: otherActions,
     logs,
   };
   const nextVillage = Object.assign({}, currentState.village, {
@@ -53,8 +51,8 @@ export function nightPhase(
     return nextState;
   }
   for (const a of otherActions) {
-    if (voted && (voted === a.actor || voted === a.target)) continue;
     const actor = currentState.creature(a.actor);
+    if (!actor.alive) continue;
     const choices = actor.mod.choices.apply(actor);
     if (!choices.includes(a.type)) {
       throw new Error(`${actor.id}(${actor.role.type}) can't ${a.type}`);

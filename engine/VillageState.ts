@@ -18,9 +18,6 @@ export class CreatureClass {
   get dieOf() {
     return this.state.targettedLogs[this.id].find((a) => a.result === "die");
   }
-  targetted(action: string) {
-    return this.state.targettedLogs[this.id].find((a) => a.action === action);
-  }
 }
 export class VillageState {
   private _creatures: { [key: string]: CreatureClass } = {};
