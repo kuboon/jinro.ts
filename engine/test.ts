@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import type { Action, ActionType, Creature, Village } from "./types.ts";
+import type { ActionType, Creature, Village } from "./types.ts";
 import { nightPhase } from "./nightPhase.ts";
 import { CreatureId } from "./types.ts";
 

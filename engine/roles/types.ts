@@ -14,6 +14,5 @@ export type RoleModule = {
   name: string;
   team: Team;
   choices: ChoiceFunc;
-  actions: Record<string, ActionFunc>;
   on?: EventHandler;
 };

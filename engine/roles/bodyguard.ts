@@ -1,19 +1,12 @@
-import { RoleModule, Team } from "./types.ts";
+import { RoleModule } from "./types.ts";
 
-const name = "bodyguard";
-const team = "villagers" as Team;
+const name = "bodyguard" as const;
+const team = "villagers" as const;
 function choices() {
   return ["guard"];
-}
-function guard() {
-  return {
-    logs: [],
-    died: [],
-  };
 }
 export default {
   name,
   team,
   choices,
-  actions: { guard },
-} as RoleModule;
+} satisfies RoleModule;

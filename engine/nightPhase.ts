@@ -1,4 +1,4 @@
-import { roleActions } from "./roles/mod.ts";
+import { roleActions } from "./roles/actions/mod.ts";
 import { VillageState } from "./VillageState.ts";
 import { Action, ActionType, CreatureId, Log, Village } from "./types.ts";
 import { partition, sample } from "./util.ts";
@@ -57,7 +57,7 @@ export function nightPhase(
     if (!choices.includes(a.type)) {
       throw new Error(`${actor.id}(${actor.role.type}) can't ${a.type}`);
     }
-    const result = roleActions[a.type](nextState, a);
+    const result = roleActions[a.type as ActionType].act(nextState, a);
     logs.push(...result.logs);
   }
   nextState.clearCache();
